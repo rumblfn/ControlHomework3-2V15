@@ -7,6 +7,7 @@ public enum Color
 {
     Condition,
     Secondary,
+    Disabled,
     Primary,
     Error,
 }

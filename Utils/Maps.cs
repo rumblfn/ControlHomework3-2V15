@@ -9,6 +9,7 @@ public static class Maps
     {
         { Color.Secondary,  ConsoleColor.DarkCyan },
         { Color.Condition,  ConsoleColor.Yellow   },
+        { Color.Disabled,   ConsoleColor.DarkBlue },
         { Color.Primary,    ConsoleColor.Cyan     },
         { Color.Error,      ConsoleColor.Red      },
     };
@@ -20,6 +21,6 @@ public static class Maps
     /// <returns>ConsoleColor.</returns>
     public static ConsoleColor GetColor(Color color)
     {
-        return ColorMap[color];
+        return ColorMap.GetValueOrDefault(color, ConsoleColor.White);
     }
 }

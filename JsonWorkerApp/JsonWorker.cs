@@ -9,7 +9,7 @@ namespace JsonWorkerApp;
 internal class JsonWorker
 {
     private string _filePath = string.Empty;
-    private PatientsList _patientsList = new();
+    private PatientsRepository _patientsRepository = new();
     private AutoSaver _autoSaver = new();
     
     private void HandlePathInput()
@@ -33,12 +33,12 @@ internal class JsonWorker
             throw new Exception("Empty collection of data.");
         }
 
-        _patientsList = new PatientsList(data);
+        _patientsRepository = new PatientsRepository(data);
     }
 
     private void SubscribeAllModels()
     {
-        foreach (Patient patient in _patientsList.Collection)
+        foreach (Patient patient in _patientsRepository.Collection)
         {
             patient.Subscribe(_autoSaver.Update);
             foreach (Doctor doctor in patient.Doctors)
@@ -57,7 +57,7 @@ internal class JsonWorker
         HandleReadData();
         SubscribeAllModels();
 
-        var templatesScript = new TemplatesScript(_patientsList);
+        var templatesScript = new TemplatesScript(_patientsRepository);
         templatesScript.HandleActionPanel();
     }
 }

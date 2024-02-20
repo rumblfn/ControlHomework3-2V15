@@ -22,7 +22,7 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
     public int AppointmentCount
     {
         get => _appointmentCount;
-        set
+        private set
         {
             _appointmentCount = value;
             OnUpdated();

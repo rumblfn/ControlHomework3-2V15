@@ -3,7 +3,7 @@ using JsonWorkerLib.Models._interfaces;
 
 namespace JsonWorkerLib.Models.Patient;
 
-public class PatientsList : ISerializable
+public class PatientsRepository : ISerializable
 {
     public List<Patient> Collection
     {
@@ -11,12 +11,12 @@ public class PatientsList : ISerializable
         private set;
     }
 
-    public PatientsList()
+    public PatientsRepository()
     {
         Collection = new List<Patient>();
     }
     
-    public PatientsList(List<Patient> models)
+    public PatientsRepository(List<Patient> models)
     {
         Collection = models;
         RemoveRepetitions();

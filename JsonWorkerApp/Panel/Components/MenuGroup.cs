@@ -1,6 +1,6 @@
 using Utils;
 
-namespace JsonWorkerApp.Components;
+namespace JsonWorkerApp.Panel.Components;
 
 /// <summary>
 /// Menu item to select.
@@ -9,6 +9,7 @@ public class MenuGroup
 {
     private string Name { get; }
     public MenuItem[] Items { get; }
+    public int ExpectedLength { get; set; }
 
     /// <summary>
     /// Initialization.
@@ -22,6 +23,15 @@ public class MenuGroup
     }
     
     /// <summary>
+    /// Converts group name to writeable view.
+    /// </summary>
+    /// <returns>Group name in string format.</returns>
+    public override string ToString()
+    {
+        return Name + ":";
+    }
+    
+    /// <summary>
     /// Responsible for the output of the menu group.
     /// </summary>
     public void Write()
@@ -29,11 +39,17 @@ public class MenuGroup
         ConsoleMethod.NicePrint(Items.Any(item => item.Selected) ? "?" : " ", 
             Color.Primary, " ");
 
-        Console.Write(Name + ":");
+        string itemString = ToString();
+        int needLength = ExpectedLength - itemString.Length;
+        string needString = needLength > 0 ? new string(' ', needLength) : string.Empty;
+        ConsoleMethod.NicePrint(ToString() + needString, Color.Primary, "");
+        
         foreach (MenuItem item in Items)
         {
             item.Write();
         }
-        Console.WriteLine("  ");
+        Console.WriteLine();
     }
+
+    public MenuItem this[int index] => Items[index];
 }

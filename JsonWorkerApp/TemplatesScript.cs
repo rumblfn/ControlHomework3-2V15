@@ -1,4 +1,7 @@
-using JsonWorkerApp.Components;
+using System.Globalization;
+using JsonWorkerApp.Panel;
+using JsonWorkerApp.Panel.Components;
+using JsonWorkerLib.Models.Doctor;
 using JsonWorkerLib.Models.Patient;
 using Utils;
 
@@ -9,38 +12,47 @@ namespace JsonWorkerApp;
 /// </summary>
 public class TemplatesScript
 {
-    private readonly PatientsList _patientsList;
+    private readonly PatientsRepository _patientsRepository;
     
-    public TemplatesScript(PatientsList patientsList)
+    public TemplatesScript(PatientsRepository patientsRepository)
     {
-        _patientsList = patientsList;
+        _patientsRepository = patientsRepository;
+    }
+    
+    private void Sort<TKey>(Func<Patient,TKey> keySelector, string fieldName)
+    {
+        _patientsRepository.OrderBy(keySelector);
+        ConsoleMethod.NicePrint($"Sort by {fieldName} completed.");
     }
 
     private void HandleSortPanel()
     {
-        var groups = new MenuGroup[] {
-            new ("", new MenuItem[]
+        var groups = new MenuGroup[] 
+        {
+            new ("About", new MenuItem[]
             {
-                new("Patient id", () => _patientsList.OrderBy(patient => patient.PatientId)),
-                new("Age", () => _patientsList.OrderBy(patient => patient.Age)),
-                new("Heart rate", () => _patientsList.OrderBy(patient => patient.HeartRate)),
+                new("Patient id", () => Sort(patient => patient.PatientId, "patient id")),
+                new("Age", () => Sort(patient => patient.Age, "patient age")),
+                new("Name", () => Sort(patient => patient.Name, "patient name")),
+                new("Gender", () => Sort(patient => patient.Gender, "patient gender")),
             }),
-            new ("", new MenuItem[]
+            new ("Editable", new MenuItem[]
             {
-                new("Name", () => _patientsList.OrderBy(patient => patient.Name)),
-                new("Gender", () => _patientsList.OrderBy(patient => patient.Gender)),
-                new("Diagnosis", () => _patientsList.OrderBy(patient => patient.Diagnosis)),
-                new("Temperature", () => _patientsList.OrderBy(patient => patient.Temperature)),
-                new("Oxygen Saturation", () => _patientsList.OrderBy(patient => patient.OxygenSaturation)),
+                new("Heart rate", 
+                    () => Sort(patient => patient.HeartRate, "patient heart rate")),
+                new("Temperature", 
+                    () => Sort(patient => patient.Temperature, "patient temperature")),
+                new("Oxygen Saturation", () => Sort(
+                    patient => patient.OxygenSaturation, "patient oxygen saturation")),
             }),
-            new ("", new MenuItem[]
+            new ("Other", new MenuItem[]
             {
-                new("Temperature", () => _patientsList.OrderBy(patient => patient.Temperature)),
-                new("Oxygen Saturation", () => _patientsList.OrderBy(patient => patient.OxygenSaturation)),
-            })
+                new("Diagnosis", 
+                    () => Sort(patient => patient.Diagnosis, "patient diagnosis")),
+            }),
         };
         
-        var dp = new DataPanel(groups);
+        var dp = new DataPanel(new MenuTable(groups));
         dp.Run("Select sort field");
         HandleActionPanel();
     }
@@ -49,16 +61,16 @@ public class TemplatesScript
     {
         var groups = new List<MenuGroup>();
 
-        int rowsCount = (int)Math.Ceiling(_patientsList.Collection.Count / 5.0);
+        int rowsCount = (int)Math.Ceiling(_patientsRepository.Collection.Count / 5.0);
         for (int i = 0; i < rowsCount; i++)
         {
             var items = new List<MenuItem>();
 
-            int maxColumnNumber = Math.Min(i * 5 + 5, _patientsList.Collection.Count);
+            int maxColumnNumber = Math.Min(i * 5 + 5, _patientsRepository.Collection.Count);
             for (int j = i * 5; j < maxColumnNumber; j++)
             {
-                Patient patient = _patientsList[j];
-                items.Add(new MenuItem(patient.PatientId.ToString(), 
+                Patient patient = _patientsRepository[j];
+                items.Add(new MenuItem($"{patient.PatientId} {patient.Name}", 
                     () => HandleUpdatePatientPanel(patient)));
             }
 
@@ -68,36 +80,68 @@ public class TemplatesScript
             }
         }
         
-        var dp = new DataPanel(groups.ToArray());
+        var dp = new DataPanel(new MenuTable(groups.ToArray()));
         dp.Run("Select patient that you want update by id");
-    }
-
-    private void HandleUpdatePatientPanel(Patient panel)
-    {
-        
-    }
-
-    private void HandleShowData()
-    {
-        ConsoleMethod.NicePrint(_patientsList.ToJson());
-        ConsoleMethod.NicePrint("Enter any key to continue.");
-        ConsoleMethod.ReadKey();
-        
         HandleActionPanel();
+    }
+
+    private void HandleUpdateDoctorPanel(Doctor doctor)
+    {
+        var groups = new MenuGroup[] 
+        {
+            new ("Id", new MenuItem[] {new(doctor.DoctorId.ToString(), null)}),
+            new ("Name", new MenuItem[] {new(doctor.Name, () => {})}),
+            new ("Appointment count", new MenuItem[]
+            {
+                new(doctor.AppointmentCount.ToString(), null),
+            }),
+        };
+
+        var dp = new DataPanel(new MenuTable(groups));
+        dp.Run($"Selected doctor: {doctor.DoctorId}. Select field that you want to edit.");
+    }
+
+    private void HandleUpdatePatientPanel(Patient patient)
+    {
+        MenuItem[] doctorsItems = patient.Doctors.Select(
+            doctor => new MenuItem($"{doctor.DoctorId} {doctor.Name}", 
+                () => HandleUpdateDoctorPanel(doctor))).ToArray();
+        
+        var groups = new MenuGroup[] 
+        {
+            new ("Id", new MenuItem[] { new(patient.PatientId.ToString(), null), }),
+            new ("Name", new MenuItem[] { new(patient.Name, () => {}), }),
+            new ("Age", new MenuItem[] { new(patient.Age.ToString(), () => {}), }),
+            new ("Gender", new MenuItem[] { new(patient.Gender, () => {}), }),
+            new ("Diagnosis", new MenuItem[] { new(patient.Diagnosis, () => {}), }),
+            new ("Heart rate", new MenuItem[] { new(patient.HeartRate.ToString(), () => {}), }),
+            new ("Temperature", new MenuItem[]
+            {
+                new(patient.Temperature.ToString(CultureInfo.InvariantCulture), () => {}),
+            }),
+            new ("Oxygen saturation", new MenuItem[]
+            {
+                new(patient.OxygenSaturation.ToString(), () => {}),
+            }),
+            new ("Select doctor to update", doctorsItems),
+        };
+
+        var dp = new DataPanel(new MenuTable(groups));
+        dp.Run("Patient selected. Select field that you want to edit.");
     }
     
     public void HandleActionPanel()
     {
-        var groups = new MenuGroup[] {
+        var groups = new MenuGroup[] 
+        {
             new ("Action type", new MenuItem[]
             {
                 new("Sort", HandleSortPanel),
                 new("Update", HandleSelectPatientPanel),
-                new("Show data", HandleShowData),
             })
         };
         
-        var dp = new DataPanel(groups);
-        dp.Run("Select what you want to do with data.");
+        var dp = new DataPanel(new MenuTable(groups));
+        dp.Run($"Select what you want to do with data (Patients count: {_patientsRepository.Collection.Count}).");
     }
 }

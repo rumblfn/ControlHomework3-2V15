@@ -76,10 +76,12 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
                 _oxygenSaturation, value, 95, 100);
             if (stateChange != StateChange.Default)
             {
+                // Call doctors.
                 OnUpdated(stateChange);
             }
             
             _oxygenSaturation = value;
+            // Call auto saver.
             OnUpdated();
         }
     }
