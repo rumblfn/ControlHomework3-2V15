@@ -27,10 +27,13 @@ internal static class Program
         {
             try
             {
-                JsonWorker.Run();
+                var worker = new JsonWorker();
+                worker.Run();
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
+                return;
                 ConsoleMethod.NicePrint("Something went wrong. Try again.");
                 ConsoleMethod.NicePrint(e.Message);
             }

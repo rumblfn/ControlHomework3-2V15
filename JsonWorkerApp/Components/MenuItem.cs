@@ -8,7 +8,7 @@ namespace JsonWorkerApp.Components;
 public class MenuItem
 {
     private string Name { get; }
-    public readonly ActionType Action;
+    public readonly Action Action;
     public bool Selected = false;
 
     /// <summary>
@@ -16,7 +16,7 @@ public class MenuItem
     /// </summary>
     /// <param name="name">Element name.</param>
     /// <param name="action">The method being called.</param>
-    public MenuItem(string name, ActionType action)
+    public MenuItem(string name, Action action)
     {
         Name = name;
         Action = action;

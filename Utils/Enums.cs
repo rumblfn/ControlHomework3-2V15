@@ -10,27 +10,3 @@ public enum Color
     Primary,
     Error,
 }
-
-public enum ActionType
-{
-    Show,
-    Sort,
-    Update,
-    Filter,
-}
-
-/// <summary>
-/// Panel actions.
-/// </summary>
-public enum FieldType
-{
-    Id,
-    Age,
-    Name,
-    Gender,
-    Diagnosis,
-    HeartRate,
-    Temperature,
-    OxygenSaturation,
-    Doctors,
-}

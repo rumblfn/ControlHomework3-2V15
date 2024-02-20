@@ -1,63 +1,63 @@
-using System.Text.Json;
-using JsonWorkerApp.Components;
-using JsonWorkerLib;
-using JsonWorkerLib.Models;
 using Utils;
+using JsonWorkerLib;
+using System.Text.Json;
+using JsonWorkerLib.Models.Doctor;
+using JsonWorkerLib.Models.Patient;
 
 namespace JsonWorkerApp;
 
-// /Users/samilvaliahmetov/Projects/ControlHomework3-2V15/assets/15V.json
-
-internal static class JsonWorker
+internal class JsonWorker
 {
-    private static MenuGroup[] _groups = Templates.DataSelectActionTypePanel();
-
-    private static void HandleAction(ActionType action)
+    private string _filePath = string.Empty;
+    private PatientsList _patientsList = new();
+    private AutoSaver _autoSaver = new();
+    
+    private void HandlePathInput()
     {
-        switch (action)
+        ConsoleMethod.NicePrint("> Enter path to json data", Color.Condition);
+        _filePath = ConsoleMethod.ReadLine();
+    }
+
+    private void HandleReadData()
+    {
+        string jsonString = File.ReadAllText(_filePath);
+        var data = JsonSerializer.Deserialize<List<Patient>>(jsonString);
+
+        if (data is null)
         {
-            case ActionType.Show:
-                break;
-            case ActionType.Sort:
-                break;
-            case ActionType.Update:
-                break;
-            case ActionType.Filter:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            throw new Exception("Data not provided");
+        }
+
+        if (data.Count == 0)
+        {
+            throw new Exception("Empty collection of data.");
+        }
+
+        _patientsList = new PatientsList(data);
+    }
+
+    private void SubscribeAllModels()
+    {
+        foreach (Patient patient in _patientsList.Collection)
+        {
+            patient.Subscribe(_autoSaver.Update);
+            foreach (Doctor doctor in patient.Doctors)
+            {
+                doctor.Subscribe(_autoSaver.Update);
+                patient.Subscribe(doctor.Update);
+            }
         }
     }
     
-    public static void Run()
+    public void Run()
     {
-        ConsoleMethod.NicePrint("> Enter path to json data", Color.Condition);
-        string jsonFilePath = ConsoleMethod.ReadLine();
-        string jsonString = File.ReadAllText(jsonFilePath);
-
-        var autoSaver = new AutoSaver(jsonFilePath);
-        var patients = JsonSerializer.Deserialize<List<Patient>>(jsonString);
-
-        if (patients == null)
-        {
-            ConsoleMethod.NicePrint("Data not provided.");
-            return;
-        }
+        HandlePathInput();
+        _autoSaver = new AutoSaver(_filePath);
         
-        foreach (Patient patient in patients)
-        {
-            autoSaver.SubscribeToEvents(patient);
-        }
-        
-        do
-        {
-            var dp = new DataPanel(_groups);
-            MenuItem? inputTypeItem = dp.Run("Data parsed.");
+        HandleReadData();
+        SubscribeAllModels();
 
-            if (inputTypeItem != null)
-                HandleAction(inputTypeItem.Action);
-            else
-                break;
-        } while (true);
+        var templatesScript = new TemplatesScript(_patientsList);
+        templatesScript.HandleActionPanel();
     }
 }

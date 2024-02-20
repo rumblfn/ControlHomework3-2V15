@@ -1,4 +1,4 @@
-namespace JsonWorkerLib.Models.Interfaces;
+namespace JsonWorkerLib.Models._interfaces;
 
 internal interface ISerializable
 {
@@ -6,5 +6,5 @@ internal interface ISerializable
     /// Serialize model to json string.
     /// </summary>
     /// <returns>Json string.</returns>
-    public string ToJSON();
+    public string ToJson();
 }

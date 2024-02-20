@@ -146,7 +146,7 @@ internal class DataPanel
     /// <summary>
     /// Panel runner.
     /// </summary>
-    public MenuItem? Run(string title)
+    public void Run(string title)
     {
         Restore(title);
 
@@ -162,10 +162,10 @@ internal class DataPanel
             }
             
             (int rowIndex, int columnIndex) = GetSelectedItemIndexes();
-            return _menuGroups[rowIndex].Items[columnIndex];
+            
+            MenuItem selectedItem = _menuGroups[rowIndex].Items[columnIndex];
+            selectedItem.Action();
         }
-
-        return null;
     }
     
     /// <summary>

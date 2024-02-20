@@ -1,78 +1,34 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JsonWorkerLib.Models.Interfaces;
+using JsonWorkerLib.Models._interfaces;
 
-namespace JsonWorkerLib.Models;
+namespace JsonWorkerLib.Models.Patient;
 
 /// <summary>
-/// Patient model.
+/// Patient.
 /// </summary>
-public class Patient : Model, ISerializable
+public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange>
 {
-    private int _id;
-    private int _age;
+    public new event EventHandler<StateChange>? Updated;
+    
     private int _heartRate;
     private int _oxygenSaturation;
     private double _temperature;
-    private string _name = string.Empty;
-    private string _gender = string.Empty;
-    private string _diagnosis = string.Empty;
-    private List<Doctor> _doctors = new ();
 
     [JsonPropertyName("patient_id")]
-    public int PatientId
-    {
-        get => _id;
-        set
-        {
-            _id = value;
-            OnUpdated();
-        }
-    }
+    public int PatientId { get; }
     
     [JsonPropertyName("name")]
-    public string Name
-    {
-        get => _name;
-        set
-        {
-            _name = value;
-            OnUpdated();
-        }
-    }
+    public string Name { get; }
     
     [JsonPropertyName("age")]
-    public int Age
-    {
-        get => _age;
-        set
-        {
-            _age = value;
-            OnUpdated();
-        }
-    }
+    public int Age { get; }
     
     [JsonPropertyName("gender")]
-    public string Gender
-    {
-        get => _gender;
-        set
-        {
-            _gender = value;
-            OnUpdated();
-        }
-    }
+    public string Gender { get; }
     
     [JsonPropertyName("diagnosis")]
-    public string Diagnosis
-    {
-        get => _diagnosis;
-        set
-        {
-            _diagnosis = value;
-            OnUpdated();
-        }
-    }
+    public string Diagnosis { get; }
     
     [JsonPropertyName("heart_rate")]
     public int HeartRate
@@ -80,6 +36,13 @@ public class Patient : Model, ISerializable
         get => _heartRate;
         set
         {
+            StateChange stateChange = Handlers.GetChangedStatus(
+                _heartRate, value, 60, 100);
+            if (stateChange != StateChange.Default)
+            {
+                OnUpdated(stateChange);
+            }
+            
             _heartRate = value;
             OnUpdated();
         }
@@ -91,6 +54,13 @@ public class Patient : Model, ISerializable
         get => _temperature;
         set
         {
+            StateChange stateChange = Handlers.GetChangedStatus(
+                _temperature, value, 36, 38);
+            if (stateChange != StateChange.Default)
+            {
+                OnUpdated(stateChange);
+            }
+            
             _temperature = value;
             OnUpdated();
         }
@@ -102,21 +72,20 @@ public class Patient : Model, ISerializable
         get => _oxygenSaturation;
         set
         {
+            StateChange stateChange = Handlers.GetChangedStatus(
+                _oxygenSaturation, value, 95, 100);
+            if (stateChange != StateChange.Default)
+            {
+                OnUpdated(stateChange);
+            }
+            
             _oxygenSaturation = value;
             OnUpdated();
         }
     }
     
     [JsonPropertyName("doctors")]
-    public List<Doctor> Doctors
-    {
-        get => _doctors;
-        set
-        {
-            _doctors = value;
-            OnUpdated();
-        }
-    }
+    public List<Doctor.Doctor> Doctors { get; }
 
     public Patient()
     {
@@ -130,7 +99,7 @@ public class Patient : Model, ISerializable
         Gender = string.Empty;
         Diagnosis = string.Empty;
         
-        Doctors = new List<Doctor>();
+        Doctors = new List<Doctor.Doctor>();
     }
 
     [JsonConstructor]
@@ -143,7 +112,7 @@ public class Patient : Model, ISerializable
         int heartRate,
         double temperature,
         int oxygenSaturation,
-        List<Doctor> doctors)
+        List<Doctor.Doctor> doctors)
     {
         PatientId = patientId;
         Name = name;
@@ -155,8 +124,18 @@ public class Patient : Model, ISerializable
         OxygenSaturation = oxygenSaturation;
         Doctors = doctors;
     }
+    
+    public void Subscribe(EventHandler<StateChange> updateEvent)
+    {
+        Updated += updateEvent;
+    }
 
-    public string ToJSON()
+    private void OnUpdated(StateChange stateChange)
+    {
+        Updated?.Invoke(this, stateChange);
+    }
+
+    public string ToJson()
     {
         return JsonSerializer.Serialize(this);
     }

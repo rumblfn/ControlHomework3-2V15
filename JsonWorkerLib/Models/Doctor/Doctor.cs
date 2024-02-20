@@ -1,40 +1,23 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JsonWorkerLib.Models.Interfaces;
+using JsonWorkerLib.Models._interfaces;
+using Utils;
 
-namespace JsonWorkerLib.Models;
+namespace JsonWorkerLib.Models.Doctor;
 
 /// <summary>
 /// The doctor's model is associated with the patient <see cref="Patient"/>>.
 /// </summary>
-public class Doctor : Model, ISerializable
+public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
 {
-    private int _id;
     private int _appointmentCount;
-    private string _name = string.Empty;
-
+    
     [JsonPropertyName("doctor_id")]
-    public int DoctorId
-    {
-        get => _id;
-        set
-        {
-            _id = value;
-            OnUpdated();
-        }
-    }
+    public int DoctorId { get; }
     
     [JsonPropertyName("name")]
-    public string Name
-    {
-        get => _name;
-        set
-        {
-            _name = value;
-            OnUpdated();
-        }
-    }
-    
+    public string Name { get; }
+
     [JsonPropertyName("appointment_count")]
     public int AppointmentCount
     {
@@ -61,8 +44,23 @@ public class Doctor : Model, ISerializable
         AppointmentCount = appointmentCount;
     }
     
-    public string ToJSON()
+    public string ToJson()
     {
         return JsonSerializer.Serialize(this);
+    }
+
+    public void Update(object? sender, StateChange updateEvent)
+    {
+        switch (updateEvent)
+        {
+            case StateChange.ReturnedToNormal:
+                AppointmentCount -= 1;
+                break;
+            case StateChange.ExceededThresholds:
+                AppointmentCount += 1;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(updateEvent), updateEvent, null);
+        }
     }
 }

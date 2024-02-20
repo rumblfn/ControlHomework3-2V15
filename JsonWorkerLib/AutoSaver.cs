@@ -3,7 +3,7 @@ using JsonWorkerLib.Models;
 
 namespace JsonWorkerLib;
 
-public class AutoSaver
+public class AutoSaver : Models._interfaces.IObserver<ModelUpdatedEventArgs>
 {
     private readonly List<Model> _modelsCollection = new ();
     private DateTime _lastUpdateTime = DateTime.MinValue;
@@ -19,12 +19,7 @@ public class AutoSaver
         _originalJsonFilePathWithoutExtension = Path.GetFileNameWithoutExtension(originalJsonFilePath);
     }
 
-    public void SubscribeToEvents(Model model)
-    {
-        model.Updated += ModelUpdated;
-    }
-
-    private void ModelUpdated(object? sender, ModelUpdatedEventArgs updateEvent)
+    public void Update(object? sender, ModelUpdatedEventArgs updateEvent)
     {
         if ((updateEvent.UpdateDateTime - _lastUpdateTime).TotalSeconds <= 15)
         {
