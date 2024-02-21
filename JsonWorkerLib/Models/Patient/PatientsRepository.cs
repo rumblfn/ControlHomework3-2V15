@@ -1,24 +1,16 @@
-using System.Text.Json;
-using JsonWorkerLib.Models._interfaces;
+using JsonWorkerLib.Abstractions;
 
 namespace JsonWorkerLib.Models.Patient;
 
-public class PatientsRepository : ISerializable
+public class PatientsRepository : Repository<Patient>
 {
-    public List<Patient> Collection
+    public PatientsRepository() : base(new List<Patient>())
     {
-        get;
-        private set;
-    }
-
-    public PatientsRepository()
-    {
-        Collection = new List<Patient>();
+        
     }
     
-    public PatientsRepository(List<Patient> models)
+    public PatientsRepository(List<Patient> collection) : base(collection)
     {
-        Collection = models;
         RemoveRepetitions();
     }
 
@@ -41,17 +33,4 @@ public class PatientsRepository : ISerializable
             }
         }
     }
-
-    public void OrderBy<TKey>(Func<Patient,TKey> keySelector)
-    {
-        Collection = Collection.OrderBy(keySelector).ToList();
-    }
-
-    public string ToJson()
-    {
-        var serializerOptions = new JsonSerializerOptions { WriteIndented = true };
-        return JsonSerializer.Serialize(Collection, serializerOptions);
-    }
-
-    public Patient this[int index] => Collection[index];
 }

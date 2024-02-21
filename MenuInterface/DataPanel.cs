@@ -1,12 +1,12 @@
-using JsonWorkerApp.Panel.Components;
+using MenuInterface.Components;
 using Utils;
 
-namespace JsonWorkerApp.Panel;
+namespace MenuInterface;
 
 /// <summary>
 /// Panel menu (task manager) for working with data.
 /// </summary>
-internal class DataPanel
+public class DataPanel
 {
     private bool _toExit;
     private readonly ConsoleCursor _consoleCursor;

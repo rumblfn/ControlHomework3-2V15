@@ -1,8 +1,8 @@
-using System.Globalization;
-using JsonWorkerApp.Panel;
-using JsonWorkerApp.Panel.Components;
-using JsonWorkerLib.Models.Doctor;
 using JsonWorkerLib.Models.Patient;
+using JsonWorkerLib.Models.Doctor;
+using MenuInterface.Components;
+using System.Globalization;
+using MenuInterface;
 using Utils;
 using Handlers = Utils.Handlers;
 
@@ -104,7 +104,7 @@ public class TemplatesScript
                 new(doctor.AppointmentCount.ToString(), null),
             }),
         };
-
+        
         var dp = new DataPanel(new MenuTable(groups));
         dp.Run($"Selected doctor: {doctor.DoctorId}. Select field that you want to edit.");
     }

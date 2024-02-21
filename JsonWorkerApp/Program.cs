@@ -1,4 +1,5 @@
-﻿using Utils;
+﻿using JsonWorkerLib;
+using Utils;
 
 namespace JsonWorkerApp;
 
@@ -27,7 +28,12 @@ internal static class Program
         {
             try
             {
-                var worker = new JsonWorker();
+                ConsoleMethod.NicePrint("> Enter path to json data", Color.Condition);
+                string path = ConsoleMethod.ReadLine();
+
+                Logger.FilePath = path;
+                
+                var worker = new JsonWorker(path);
                 worker.Run();
             }
             catch (Exception e)

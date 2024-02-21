@@ -1,6 +1,6 @@
 using Utils;
 
-namespace JsonWorkerApp.Panel.Components;
+namespace MenuInterface.Components;
 
 /// <summary>
 /// Menu item to select.

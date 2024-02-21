@@ -1,26 +1,25 @@
-using Utils;
-using JsonWorkerLib;
-using System.Text.Json;
-using JsonWorkerLib.Models.Doctor;
 using JsonWorkerLib.Models.Patient;
+using JsonWorkerLib.Models.Doctor;
+using System.Text.Json;
+using JsonWorkerLib;
 
 namespace JsonWorkerApp;
 
 internal class JsonWorker
 {
-    private string _filePath = string.Empty;
-    private PatientsRepository _patientsRepository = new();
-    private AutoSaver _autoSaver = new();
-    
-    private void HandlePathInput()
+    private readonly PatientsRepository _patientsRepository;
+    private readonly AutoSaver _autoSaver;
+
+    public JsonWorker(string path)
     {
-        ConsoleMethod.NicePrint("> Enter path to json data", Color.Condition);
-        _filePath = ConsoleMethod.ReadLine();
+        _patientsRepository = HandleReadData(path);
+        _autoSaver = new AutoSaver(_patientsRepository, path);
+        SubscribeAllModels();
     }
 
-    private void HandleReadData()
+    private static PatientsRepository HandleReadData(string path)
     {
-        string jsonString = File.ReadAllText(_filePath);
+        string jsonString = File.ReadAllText(path);
         var data = JsonSerializer.Deserialize<List<Patient>>(jsonString);
 
         if (data is null)
@@ -33,13 +32,12 @@ internal class JsonWorker
             throw new Exception("Empty collection of data.");
         }
 
-        _patientsRepository = new PatientsRepository(data);
+        return new PatientsRepository(data);
     }
 
     private void SubscribeAllModels()
     {
-        _autoSaver = new AutoSaver(_patientsRepository, _filePath);
-        foreach (Patient patient in _patientsRepository.Collection)
+        foreach (Patient patient in _patientsRepository)
         {
             patient.Subscribe(_autoSaver.Update);
             foreach (Doctor doctor in patient.Doctors)
@@ -52,10 +50,6 @@ internal class JsonWorker
     
     public void Run()
     {
-        HandlePathInput();
-        HandleReadData();
-        SubscribeAllModels();
-
         var templatesScript = new TemplatesScript(_patientsRepository);
         templatesScript.HandleActionPanel();
     }

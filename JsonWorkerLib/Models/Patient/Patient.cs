@@ -1,7 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JsonWorkerLib.Models._interfaces;
-using Utils;
+using JsonWorkerLib._interfaces;
+using JsonWorkerLib.Abstractions;
+using JsonWorkerLib.Models._shared;
 
 namespace JsonWorkerLib.Models.Patient;
 
@@ -36,9 +37,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _name;
         set
         {
-            ConsoleMethod.NicePrint($"Patient name updates {Name} -> {value}");
-            _name = value;
+            Logger.Info($"Patient Id: {PatientId}, name updates {Name} -> {value}");
             
+            _name = value;
             OnUpdated();
         }
     }
@@ -49,9 +50,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _age;
         set
         {
-            ConsoleMethod.NicePrint($"Patient age updates {Age} -> {value}");
-            _age = value;
+            Logger.Info($"Patient Id: {PatientId}, age updates {Age} -> {value}");
             
+            _age = value;
             OnUpdated();
         }
     }
@@ -62,9 +63,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _gender;
         set
         {
-            ConsoleMethod.NicePrint($"Patient gender updates {Gender} -> {value}");
-            _gender = value;
+            Logger.Info($"Patient Id: {PatientId}, gender updates {Gender} -> {value}");
             
+            _gender = value;
             OnUpdated();
         }
     }
@@ -75,9 +76,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _diagnosis;
         set
         {
-            ConsoleMethod.NicePrint($"Patient diagnosis updates {Diagnosis} -> {value}");
-            _diagnosis = value;
+            Logger.Info($"Patient Id: {PatientId}, diagnosis updates {Diagnosis} -> {value}");
             
+            _diagnosis = value;
             OnUpdated();
         }
     }
@@ -88,12 +89,11 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _heartRate;
         set
         {
+            Logger.Info($"Patient Id: {PatientId}, heart rate updates {HeartRate} -> {value}");
+            
             StateChange stateChange = Handlers.GetChangedStatus(
                 _heartRate, value, 60, 100);
-            if (stateChange != StateChange.Default)
-            {
-                OnUpdated(stateChange);
-            }
+            OnUpdated(stateChange);
             
             _heartRate = value;
             OnUpdated();
@@ -106,12 +106,11 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _temperature;
         set
         {
+            Logger.Info($"Patient Id: {PatientId}, temperature updates {Temperature} -> {value}");
+            
             StateChange stateChange = Handlers.GetChangedStatus(
                 _temperature, value, 36, 38);
-            if (stateChange != StateChange.Default)
-            {
-                OnUpdated(stateChange);
-            }
+            OnUpdated(stateChange);
             
             _temperature = value;
             OnUpdated();
@@ -124,16 +123,13 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
         get => _oxygenSaturation;
         set
         {
+            Logger.Info($"Patient Id: {PatientId}, oxygen saturation updates {OxygenSaturation} -> {value}");
+            
             StateChange stateChange = Handlers.GetChangedStatus(
                 _oxygenSaturation, value, 95, 100);
-            if (stateChange != StateChange.Default)
-            {
-                // Call doctors.
-                OnUpdated(stateChange);
-            }
+            OnUpdated(stateChange);
             
             _oxygenSaturation = value;
-            // Call auto saver.
             OnUpdated();
         }
     }
@@ -186,6 +182,12 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
 
     private void OnUpdated(StateChange stateChange)
     {
+        if (stateChange == StateChange.Default)
+        {
+            return;
+        }
+        
+        Logger.Info($"Patient Id: {PatientId}, state changed to {stateChange}");
         Updated?.Invoke(this, stateChange);
     }
 

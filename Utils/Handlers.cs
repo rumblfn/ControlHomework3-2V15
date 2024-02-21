@@ -2,6 +2,25 @@ namespace Utils;
 
 public static class Handlers
 {
+    public static string GetFilePathWithoutExtension(string path)
+    {
+        try
+        {
+            return Path.GetDirectoryName(path) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(path);
+        }
+        catch (PathTooLongException)
+        {
+            ConsoleMethod.NicePrint("Path to long. Try again.");
+        }
+        catch (ArgumentException)
+        {
+            ConsoleMethod.NicePrint(
+                "The path parameter contains invalid characters, is empty, or contains only white spaces.");
+        }
+
+        return string.Empty;
+    }
+    
     public static int GetValue(int min)
     {
         int value;

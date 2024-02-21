@@ -1,4 +1,4 @@
-namespace JsonWorkerLib.Models._interfaces;
+namespace JsonWorkerLib._interfaces;
 
 internal interface ISerializable
 {

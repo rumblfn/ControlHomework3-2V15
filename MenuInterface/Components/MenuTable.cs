@@ -1,4 +1,4 @@
-namespace JsonWorkerApp.Panel.Components;
+namespace MenuInterface.Components;
 
 public class MenuTable
 {
@@ -45,7 +45,6 @@ public class MenuTable
     /// Gets selected item indexes.
     /// </summary>
     /// <returns>Selected item row and column indexes.</returns>
-    /// <exception cref="Exception">If nothing was found.</exception>
     public (int, int) GetSelectedItemIndexes()
     {
         for (int rowIndex = 0; rowIndex < _groups.Length; rowIndex++)

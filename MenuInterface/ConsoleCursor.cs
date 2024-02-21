@@ -1,4 +1,4 @@
-namespace JsonWorkerApp.Panel;
+namespace MenuInterface;
 
 public class ConsoleCursor
 {

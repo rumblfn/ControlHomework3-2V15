@@ -1,7 +1,8 @@
 using System.Text.Json;
+using JsonWorkerLib._interfaces;
+using JsonWorkerLib.Abstractions;
+using JsonWorkerLib.Models._shared;
 using System.Text.Json.Serialization;
-using JsonWorkerLib.Models._interfaces;
-using Utils;
 
 namespace JsonWorkerLib.Models.Doctor;
 
@@ -27,9 +28,9 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
         get => _name;
         set
         {
-            ConsoleMethod.NicePrint($"Doctor name updates {Name} -> {value}");
-            _name = value;
+            Logger.Info($"Doctor Id: {DoctorId}, name updates {Name} -> {value}");
             
+            _name = value;
             OnUpdated();
         }
     }
@@ -40,8 +41,7 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
         get => _appointmentCount;
         private set
         {
-            ConsoleMethod.NicePrint(
-                $"Doctors (Id: {DoctorId}) appointment count updates: {AppointmentCount} -> {value}");
+            Logger.Info($"Doctor Id: {DoctorId}, appointment count updates: {AppointmentCount} -> {value}");
             
             _appointmentCount = value;
             OnUpdated();
@@ -78,6 +78,7 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
             case StateChange.ExceededThresholds:
                 AppointmentCount += 1;
                 break;
+            case StateChange.Default:
             default:
                 throw new ArgumentOutOfRangeException(nameof(updateEvent), updateEvent, null);
         }

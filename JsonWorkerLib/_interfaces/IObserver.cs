@@ -1,4 +1,4 @@
-namespace JsonWorkerLib.Models._interfaces;
+namespace JsonWorkerLib._interfaces;
 
 public interface IObserver<in T>
 {

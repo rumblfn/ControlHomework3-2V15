@@ -1,3 +1,5 @@
+using JsonWorkerLib.Models._shared;
+
 namespace JsonWorkerLib.Models.Patient;
 
 public static class Handlers

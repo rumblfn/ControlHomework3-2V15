@@ -1,4 +1,4 @@
-namespace JsonWorkerLib.Models;
+namespace JsonWorkerLib.Models._shared;
 
 public enum StateChange
 {
