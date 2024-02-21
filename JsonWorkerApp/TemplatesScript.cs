@@ -9,23 +9,40 @@ using Handlers = Utils.Handlers;
 namespace JsonWorkerApp;
 
 /// <summary>
-/// Provides menu panels for working with program,
+/// Provides menu panels for managing patients and doctors data.
+/// It allows sorting the patient data based on different fields
+/// and updating the information of patients and doctors.
 /// </summary>
 public class TemplatesScript
 {
     private readonly PatientsRepository _patientsRepository;
     
+    /// <summary>
+    /// Provides instance of the PatientsRepository class
+    /// used to store and retrieve patient data.
+    /// </summary>
+    /// <param name="patientsRepository">PatientsRepository.</param>
     public TemplatesScript(PatientsRepository patientsRepository)
     {
         _patientsRepository = patientsRepository;
     }
     
+    /// <summary>
+    /// Sorts the patient data based on the specified field.
+    /// </summary>
+    /// <param name="keySelector">Key selector in LINQ syntax.</param>
+    /// <param name="fieldName">Humanized sorting field.</param>
+    /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
     private void Sort<TKey>(Func<Patient,TKey> keySelector, string fieldName)
     {
         _patientsRepository.OrderBy(keySelector);
         ConsoleMethod.NicePrint($"Sort by {fieldName} completed.");
     }
 
+    /// <summary>
+    /// Panel for sorting data.
+    /// Creates menu interface and runs it.
+    /// </summary>
     private void HandleSortPanel()
     {
         var groups = new MenuGroup[] 
@@ -58,6 +75,9 @@ public class TemplatesScript
         HandleActionPanel();
     }
 
+    /// <summary>
+    /// Handles the select patient panel, allowing the user to select a patient to update.
+    /// </summary>
     private void HandleSelectPatientPanel()
     {
         var groups = new List<MenuGroup>();
@@ -86,7 +106,11 @@ public class TemplatesScript
         HandleActionPanel();
     }
 
-    private void HandleUpdateDoctorPanel(Doctor doctor)
+    /// <summary>
+    /// Handles the update doctor panel, allowing update fields of a selected doctor.
+    /// </summary>
+    /// <param name="doctor">Selected doctor.</param>
+    private static void HandleUpdateDoctorPanel(Doctor doctor)
     {
         var groups = new MenuGroup[] 
         {
@@ -109,7 +133,12 @@ public class TemplatesScript
         dp.Run($"Selected doctor: {doctor.DoctorId}. Select field that you want to edit.");
     }
 
-    private void HandleUpdatePatientPanel(Patient patient)
+    /// <summary>
+    /// Handles the update patient panel,
+    /// allowing the user to update the information of a selected patient.
+    /// </summary>
+    /// <param name="patient">Selected patient.</param>
+    private static void HandleUpdatePatientPanel(Patient patient)
     {
         MenuItem[] doctorsItems = patient.Doctors.Select(
             doctor => new MenuItem($"{doctor.DoctorId} {doctor.Name}", 
@@ -181,6 +210,9 @@ public class TemplatesScript
         dp.Run("Patient selected. Select field that you want to edit.");
     }
     
+    /// <summary>
+    /// Handles the action panel, allowing the user to select an action to perform on the data.
+    /// </summary>
     public void HandleActionPanel()
     {
         var groups = new MenuGroup[] 

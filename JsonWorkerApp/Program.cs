@@ -3,6 +3,9 @@ using Utils;
 
 namespace JsonWorkerApp;
 
+/// <summary>
+/// Starts app and handles it in loop.
+/// </summary>
 internal static class Program
 {
     private const ConsoleKey ExitKey = ConsoleKey.Q;
@@ -31,8 +34,10 @@ internal static class Program
                 ConsoleMethod.NicePrint("> Enter path to json data", Color.Condition);
                 string path = ConsoleMethod.ReadLine();
 
+                // Update log path.
                 Logger.FilePath = path;
                 
+                // Start worker.
                 var worker = new JsonWorker(path);
                 worker.Run();
             }

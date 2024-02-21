@@ -5,11 +5,19 @@ using JsonWorkerLib;
 
 namespace JsonWorkerApp;
 
+/// <summary>
+/// Handles working with json file.
+/// </summary>
 internal class JsonWorker
 {
     private readonly PatientsRepository _patientsRepository;
     private readonly AutoSaver _autoSaver;
 
+    /// <summary>
+    /// Reads data. Creates auto saver with read data.
+    /// Subscribes auto saver to all models and doctors to their patients.
+    /// </summary>
+    /// <param name="path">Path to file with data in json format.</param>
     public JsonWorker(string path)
     {
         _patientsRepository = HandleReadData(path);
@@ -17,6 +25,12 @@ internal class JsonWorker
         SubscribeAllModels();
     }
 
+    /// <summary>
+    /// Reads data to patients repository.
+    /// </summary>
+    /// <param name="path">Path to data in json format.</param>
+    /// <returns></returns>
+    /// <exception cref="Exception">Data not provided or is empty.</exception>
     private static PatientsRepository HandleReadData(string path)
     {
         string jsonString = File.ReadAllText(path);
@@ -35,6 +49,10 @@ internal class JsonWorker
         return new PatientsRepository(data);
     }
 
+    /// <summary>
+    /// Subscribes auto saver to all models and
+    /// subscribes doctors to their patients.
+    /// </summary>
     private void SubscribeAllModels()
     {
         foreach (Patient patient in _patientsRepository)
@@ -48,6 +66,9 @@ internal class JsonWorker
         }
     }
     
+    /// <summary>
+    /// Runs menu interface to work with parsed data.
+    /// </summary>
     public void Run()
     {
         var templatesScript = new TemplatesScript(_patientsRepository);

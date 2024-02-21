@@ -1,5 +1,8 @@
 namespace JsonWorkerLib._interfaces;
 
+/// <summary>
+/// Interface for classes with serialization.
+/// </summary>
 internal interface ISerializable
 {
     /// <summary>

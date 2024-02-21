@@ -48,6 +48,9 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
         }
     }
     
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
     public Doctor()
     {
         DoctorId = 0;

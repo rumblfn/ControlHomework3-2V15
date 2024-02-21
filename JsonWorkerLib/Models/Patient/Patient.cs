@@ -7,7 +7,7 @@ using JsonWorkerLib.Models._shared;
 namespace JsonWorkerLib.Models.Patient;
 
 /// <summary>
-/// Patient.
+/// Patient model.
 /// </summary>
 public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange>
 {

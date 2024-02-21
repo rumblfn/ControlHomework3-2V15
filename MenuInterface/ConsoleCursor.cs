@@ -1,5 +1,8 @@
 namespace MenuInterface;
 
+/// <summary>
+/// Cursor for interactive menu.
+/// </summary>
 public class ConsoleCursor
 {
     private int _currentCursorRowIndex;
@@ -19,6 +22,9 @@ public class ConsoleCursor
         _currentCursorColumnIndex = Console.CursorLeft;
     }
 
+    /// <summary>
+    /// Restores cursor position with saved.
+    /// </summary>
     public void RestorePosition()
     {
         Console.SetCursorPosition(_currentCursorColumnIndex, _currentCursorRowIndex);

@@ -1,5 +1,8 @@
 namespace MenuInterface.Components;
 
+/// <summary>
+/// Table for store and handle menu groups.
+/// </summary>
 public class MenuTable
 {
     private readonly MenuGroup[] _groups;
@@ -12,6 +15,9 @@ public class MenuTable
         UpdateGroupsLength();
     }
 
+    /// <summary>
+    /// Updates view length items in group.
+    /// </summary>
     private void UpdateItemsLength()
     {
         int maxColumnCount = _groups.Select(group => group.Items.Length).Prepend(0).Max();
@@ -32,6 +38,9 @@ public class MenuTable
         }
     }
 
+    /// <summary>
+    /// Updates groups view length.
+    /// </summary>
     private void UpdateGroupsLength()
     {
         int maxGroupStringLength = _groups.Select(group => group.ToString().Length).Prepend(0).Max();
@@ -66,6 +75,10 @@ public class MenuTable
         return (initialRowNumber, initialColumnNumber);
     }
 
+    /// <summary>
+    /// Gets selected item indexes and returns it.
+    /// </summary>
+    /// <returns>Selected item.</returns>
     public MenuItem GetSelectedItem()
     {
         (int rowIndex, int columnIndex) = GetSelectedItemIndexes();
