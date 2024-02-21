@@ -10,13 +10,29 @@ namespace JsonWorkerLib.Models.Doctor;
 /// </summary>
 public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
 {
+    private int _doctorId;
+    private string _name = string.Empty;
     private int _appointmentCount;
-    
+
     [JsonPropertyName("doctor_id")]
-    public int DoctorId { get; }
-    
+    public int DoctorId
+    {
+        get => _doctorId;
+        private init => _doctorId = value;
+    }
+
     [JsonPropertyName("name")]
-    public string Name { get; }
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            ConsoleMethod.NicePrint($"Doctor name updates {Name} -> {value}");
+            _name = value;
+            
+            OnUpdated();
+        }
+    }
 
     [JsonPropertyName("appointment_count")]
     public int AppointmentCount
@@ -24,6 +40,9 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
         get => _appointmentCount;
         private set
         {
+            ConsoleMethod.NicePrint(
+                $"Doctors (Id: {DoctorId}) appointment count updates: {AppointmentCount} -> {value}");
+            
             _appointmentCount = value;
             OnUpdated();
         }

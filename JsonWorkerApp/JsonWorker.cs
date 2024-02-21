@@ -38,6 +38,7 @@ internal class JsonWorker
 
     private void SubscribeAllModels()
     {
+        _autoSaver = new AutoSaver(_patientsRepository, _filePath);
         foreach (Patient patient in _patientsRepository.Collection)
         {
             patient.Subscribe(_autoSaver.Update);
@@ -52,8 +53,6 @@ internal class JsonWorker
     public void Run()
     {
         HandlePathInput();
-        _autoSaver = new AutoSaver(_filePath);
-        
         HandleReadData();
         SubscribeAllModels();
 

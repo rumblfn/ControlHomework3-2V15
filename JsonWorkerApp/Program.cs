@@ -32,8 +32,6 @@ internal static class Program
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                return;
                 ConsoleMethod.NicePrint("Something went wrong. Try again.");
                 ConsoleMethod.NicePrint(e.Message);
             }

@@ -19,7 +19,7 @@ public static class ConsoleMethod
         catch (InvalidOperationException ex)
         {
             NicePrint("Something went wrong with reading key.");
-            
+            NicePrint(ex.Message, Color.Error);
             
             return ConsoleKey.Spacebar;
         }

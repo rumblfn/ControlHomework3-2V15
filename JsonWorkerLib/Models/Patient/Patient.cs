@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JsonWorkerLib.Models._interfaces;
+using Utils;
 
 namespace JsonWorkerLib.Models.Patient;
 
@@ -10,25 +11,76 @@ namespace JsonWorkerLib.Models.Patient;
 public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange>
 {
     public new event EventHandler<StateChange>? Updated;
+
+    private readonly int _patientId;
+    private int _age;
+    
+    private string _name = string.Empty;
+    private string _gender = string.Empty;
+    private string _diagnosis = string.Empty;
     
     private int _heartRate;
     private int _oxygenSaturation;
     private double _temperature;
 
     [JsonPropertyName("patient_id")]
-    public int PatientId { get; }
+    public int PatientId
+    {
+        get => _patientId;
+        private init => _patientId = value;
+    }
     
     [JsonPropertyName("name")]
-    public string Name { get; }
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            ConsoleMethod.NicePrint($"Patient name updates {Name} -> {value}");
+            _name = value;
+            
+            OnUpdated();
+        }
+    }
     
     [JsonPropertyName("age")]
-    public int Age { get; }
+    public int Age
+    {
+        get => _age;
+        set
+        {
+            ConsoleMethod.NicePrint($"Patient age updates {Age} -> {value}");
+            _age = value;
+            
+            OnUpdated();
+        }
+    }
     
     [JsonPropertyName("gender")]
-    public string Gender { get; }
+    public string Gender
+    {
+        get => _gender;
+        set
+        {
+            ConsoleMethod.NicePrint($"Patient gender updates {Gender} -> {value}");
+            _gender = value;
+            
+            OnUpdated();
+        }
+    }
     
     [JsonPropertyName("diagnosis")]
-    public string Diagnosis { get; }
+    public string Diagnosis
+    {
+        get => _diagnosis;
+        set
+        {
+            ConsoleMethod.NicePrint($"Patient diagnosis updates {Diagnosis} -> {value}");
+            _diagnosis = value;
+            
+            OnUpdated();
+        }
+    }
     
     [JsonPropertyName("heart_rate")]
     public int HeartRate

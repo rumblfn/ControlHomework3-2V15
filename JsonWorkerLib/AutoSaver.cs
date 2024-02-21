@@ -1,41 +1,45 @@
-using System.Text.Json;
 using JsonWorkerLib.Models;
+using JsonWorkerLib.Models.Patient;
+using Utils;
 
 namespace JsonWorkerLib;
 
 public class AutoSaver : Models._interfaces.IObserver<ModelUpdatedEventArgs>
 {
-    private readonly List<Model> _modelsCollection = new ();
+    private readonly PatientsRepository _patientsRepository = new ();
     private DateTime _lastUpdateTime = DateTime.MinValue;
-    private readonly string _originalJsonFilePathWithoutExtension;
+    private readonly string _fileNameWithoutExtension;
 
     public AutoSaver()
     {
-        _originalJsonFilePathWithoutExtension = string.Empty;
+        _fileNameWithoutExtension = string.Empty;
     }
     
-    public AutoSaver(string originalJsonFilePath)
+    public AutoSaver(PatientsRepository patientsRepository, string filePath)
     {
-        _originalJsonFilePathWithoutExtension = Path.GetFileNameWithoutExtension(originalJsonFilePath);
+        _patientsRepository = patientsRepository;
+        _fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
     }
 
     public void Update(object? sender, ModelUpdatedEventArgs updateEvent)
     {
+        ConsoleMethod.NicePrint("AutoSaver called.");
+        
         if ((updateEvent.UpdateDateTime - _lastUpdateTime).TotalSeconds <= 15)
         {
+            ConsoleMethod.NicePrint("Trying to save new data.");
             SaveToJson();
         }
         
         _lastUpdateTime = updateEvent.UpdateDateTime;
+        ConsoleMethod.NicePrint("It's been more than 15 seconds. Data not saved.");
     }
 
     private void SaveToJson()
     {
-        string tmpFileName = _originalJsonFilePathWithoutExtension + "_tmp.json";
-
-        var serializerOptions = new JsonSerializerOptions { WriteIndented = true };
-        string jsonData = JsonSerializer.Serialize(_modelsCollection, serializerOptions);
-
-        File.WriteAllText(tmpFileName, jsonData);
+        string tmpFileName = _fileNameWithoutExtension + "_tmp.json";
+        
+        File.WriteAllText(tmpFileName, _patientsRepository.ToJson());
+        ConsoleMethod.NicePrint("The data has been saved successfully.");
     }
 }

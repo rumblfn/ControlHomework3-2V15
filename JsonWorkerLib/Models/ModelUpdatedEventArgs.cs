@@ -1,4 +1,4 @@
-namespace JsonWorkerLib;
+namespace JsonWorkerLib.Models;
 
 public class ModelUpdatedEventArgs : EventArgs
 {

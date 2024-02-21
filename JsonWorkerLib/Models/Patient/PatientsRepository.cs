@@ -49,7 +49,8 @@ public class PatientsRepository : ISerializable
 
     public string ToJson()
     {
-        return JsonSerializer.Serialize(Collection);
+        var serializerOptions = new JsonSerializerOptions { WriteIndented = true };
+        return JsonSerializer.Serialize(Collection, serializerOptions);
     }
 
     public Patient this[int index] => Collection[index];

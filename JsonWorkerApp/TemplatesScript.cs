@@ -4,6 +4,7 @@ using JsonWorkerApp.Panel.Components;
 using JsonWorkerLib.Models.Doctor;
 using JsonWorkerLib.Models.Patient;
 using Utils;
+using Handlers = Utils.Handlers;
 
 namespace JsonWorkerApp;
 
@@ -90,7 +91,14 @@ public class TemplatesScript
         var groups = new MenuGroup[] 
         {
             new ("Id", new MenuItem[] {new(doctor.DoctorId.ToString(), null)}),
-            new ("Name", new MenuItem[] {new(doctor.Name, () => {})}),
+            new ("Name", new MenuItem[]
+            {
+                new(doctor.Name, () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new doctor name: ");
+                    doctor.Name = ConsoleMethod.ReadLine();
+                })
+            }),
             new ("Appointment count", new MenuItem[]
             {
                 new(doctor.AppointmentCount.ToString(), null),
@@ -110,18 +118,61 @@ public class TemplatesScript
         var groups = new MenuGroup[] 
         {
             new ("Id", new MenuItem[] { new(patient.PatientId.ToString(), null), }),
-            new ("Name", new MenuItem[] { new(patient.Name, () => {}), }),
-            new ("Age", new MenuItem[] { new(patient.Age.ToString(), () => {}), }),
-            new ("Gender", new MenuItem[] { new(patient.Gender, () => {}), }),
-            new ("Diagnosis", new MenuItem[] { new(patient.Diagnosis, () => {}), }),
-            new ("Heart rate", new MenuItem[] { new(patient.HeartRate.ToString(), () => {}), }),
+            new ("Name", new MenuItem[]
+            {
+                new(patient.Name, () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient name:");
+                    patient.Name = ConsoleMethod.ReadLine();
+                }),
+            }),
+            new ("Age", new MenuItem[]
+            {
+                new(patient.Age.ToString(), () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient age:");
+                    patient.Age = Handlers.GetValue(0);
+                }),
+            }),
+            new ("Gender", new MenuItem[]
+            {
+                new(patient.Gender, () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient gender:");
+                    patient.Gender = ConsoleMethod.ReadLine();
+                }),
+            }),
+            new ("Diagnosis", new MenuItem[]
+            {
+                new(patient.Diagnosis, () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient diagnosis:");
+                    patient.Diagnosis = ConsoleMethod.ReadLine();
+                }),
+            }),
+            new ("Heart rate", new MenuItem[]
+            {
+                new(patient.HeartRate.ToString(), () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient heart rate:");
+                    patient.HeartRate = Handlers.GetValue(0);
+                }),
+            }),
             new ("Temperature", new MenuItem[]
             {
-                new(patient.Temperature.ToString(CultureInfo.InvariantCulture), () => {}),
+                new(patient.Temperature.ToString(CultureInfo.InvariantCulture), () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient temperature:");
+                    patient.Temperature = Handlers.GetValue(0.0);
+                }),
             }),
             new ("Oxygen saturation", new MenuItem[]
             {
-                new(patient.OxygenSaturation.ToString(), () => {}),
+                new(patient.OxygenSaturation.ToString(), () =>
+                {
+                    ConsoleMethod.NicePrint("> Enter new patient oxygen saturation:");
+                    patient.OxygenSaturation = Handlers.GetValue(0);
+                }),
             }),
             new ("Select doctor to update", doctorsItems),
         };
