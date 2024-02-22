@@ -4,5 +4,6 @@ public enum StateChange
 {
     ReturnedToNormal,
     ExceededThresholds,
+    NothingChanged,
     Default
 }

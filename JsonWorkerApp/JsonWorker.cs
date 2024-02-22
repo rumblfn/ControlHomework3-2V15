@@ -55,13 +55,25 @@ internal class JsonWorker
     /// </summary>
     private void SubscribeAllModels()
     {
+        // To avoid excess auto savers subscriptions.
+        var uniqDoctorsIds = new HashSet<int>();
+        
         foreach (Patient patient in _patientsRepository)
         {
+            // One patient can has duplicated doctors.
+            var uniqPatientDoctorsIds = new HashSet<int>();
+            
             patient.Subscribe(_autoSaver.Update);
             foreach (Doctor doctor in patient.Doctors)
             {
-                doctor.Subscribe(_autoSaver.Update);
-                patient.Subscribe(doctor.Update);
+                if (uniqPatientDoctorsIds.Add(doctor.DoctorId))
+                {
+                    patient.Subscribe(doctor.Update);
+                }
+                if (uniqDoctorsIds.Add(doctor.DoctorId))
+                {
+                    doctor.Subscribe(_autoSaver.Update);
+                }
             }
         }
     }

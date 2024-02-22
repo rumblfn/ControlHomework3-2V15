@@ -17,6 +17,11 @@ public static class Handlers
     /// <returns>Changed field status.</returns>
     public static StateChange GetChangedStatus(double oldValue, double newValue, double minValue, double maxValue)
     {
+        if (Math.Abs(oldValue - newValue) < double.Epsilon)
+        {
+            return StateChange.NothingChanged;
+        }
+        
         if ((oldValue < minValue || oldValue > maxValue) &&
             newValue >= minValue && newValue <= maxValue)
         {

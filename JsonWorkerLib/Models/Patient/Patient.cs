@@ -93,10 +93,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
             
             StateChange stateChange = Handlers.GetChangedStatus(
                 _heartRate, value, 60, 100);
-            OnUpdated(stateChange);
-            
             _heartRate = value;
-            OnUpdated();
+            
+            OnUpdated(stateChange);
         }
     }
     
@@ -110,10 +109,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
             
             StateChange stateChange = Handlers.GetChangedStatus(
                 _temperature, value, 36, 38);
-            OnUpdated(stateChange);
-            
             _temperature = value;
-            OnUpdated();
+            
+            OnUpdated(stateChange);
         }
     }
     
@@ -127,10 +125,9 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
             
             StateChange stateChange = Handlers.GetChangedStatus(
                 _oxygenSaturation, value, 95, 100);
-            OnUpdated(stateChange);
-            
             _oxygenSaturation = value;
-            OnUpdated();
+            
+            OnUpdated(stateChange);
         }
     }
     
@@ -184,11 +181,13 @@ public class Patient : Model, ISerializable, _interfaces.IObservable<StateChange
     {
         if (stateChange == StateChange.Default)
         {
-            return;
+            OnUpdated();
         }
-        
-        Logger.Info($"Patient Id: {PatientId}, state changed to {stateChange}");
-        Updated?.Invoke(this, stateChange);
+        else if (stateChange != StateChange.NothingChanged)
+        {
+            Logger.Info($"Patient Id: {PatientId}, state changed to {stateChange}");
+            Updated?.Invoke(this, stateChange);
+        }
     }
 
     public string ToJson()
