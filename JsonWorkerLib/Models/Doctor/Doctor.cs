@@ -81,9 +81,6 @@ public class Doctor : Model, ISerializable, _interfaces.IObserver<StateChange>
             case StateChange.ExceededThresholds:
                 AppointmentCount += 1;
                 break;
-            case StateChange.Default:
-            default:
-                throw new ArgumentOutOfRangeException(nameof(updateEvent), updateEvent, null);
         }
     }
 }

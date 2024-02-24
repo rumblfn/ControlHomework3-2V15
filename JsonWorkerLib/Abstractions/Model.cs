@@ -16,7 +16,7 @@ public abstract class Model : JsonWorkerLib._interfaces.IObservable<ModelUpdated
     
     public void OnUpdated()
     {
-        Logger.Info($"Listeners count: {Updated?.GetInvocationList().Length}");
+        Logger.Info($"Model listeners count: {Updated?.GetInvocationList().Length}");
         Updated?.Invoke(this, new ModelUpdatedEventArgs());
     }
 }
